@@ -1,0 +1,36 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:batch="http://www.springframework.org/schema/batch"
+	xmlns:hdp="http://www.springframework.org/schema/hadoop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+      	http://www.springframework.org/schema/batch	http://www.springframework.org/schema/batch/spring-batch.xsd
+      	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+      	http://www.springframework.org/schema/hadoop http://www.springframework.org/schema/hadoop/spring-hadoop.xsd">
+
+
+	<context:property-placeholder location="hadoop.properties"/>
+	
+	<hdp:configuration>
+        fs.defaultFS=${hdfs}
+        yarn.resourcemanager.address=${yarn.resourcemanager.address}
+        yarn.resourcemanager.scheduler.address=${yarn.resourcemanager.scheduler.address}
+        mapreduce.jobhistory.address=${mapreduce.jobhistory.address}
+        mapreduce.framework.name=yarn
+        mapreduce.app-submission.cross-platform=true
+	</hdp:configuration>
+
+    <hdp:job-runner id="streamingJobRunner" job-ref="streamingJob" run-at-startup="true"/>
+
+    <hdp:streaming id="streamingJob"
+                   input-path="${wc.input.path}"
+                   output-path="${tmp.streaming.path}"
+                   mapper="cat"
+                   reducer="cat">
+        <hdp:cmd-env>
+            HADOOP_CLASSPATH=$HADOOP_CLASSPATH:$HADOOP_HOME/hadoop-streaming.jar
+        </hdp:cmd-env>
+    </hdp:streaming>
+
+	
+</beans>

@@ -1,0 +1,76 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:batch="http://www.springframework.org/schema/batch"
+	xmlns:hdp="http://www.springframework.org/schema/hadoop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+      	http://www.springframework.org/schema/batch	http://www.springframework.org/schema/batch/spring-batch.xsd
+      	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+      	http://www.springframework.org/schema/hadoop http://www.springframework.org/schema/hadoop/spring-hadoop.xsd">
+
+    <import resource="batch-common-context.xml"/>
+
+	<context:property-placeholder location="hadoop.properties"/>
+	 
+	<context:component-scan base-package="wordcount" />
+	
+	<hdp:configuration>
+        fs.defaultFS=${hdfs}
+        yarn.resourcemanager.address=${yarn.resourcemanager.address}
+        yarn.resourcemanager.scheduler.address=${yarn.resourcemanager.scheduler.address}
+        mapreduce.jobhistory.address=${mapreduce.jobhistory.address}
+        mapreduce.framework.name=yarn
+        mapreduce.app-submission.cross-platform=true
+	</hdp:configuration>
+
+    <hdp:script id="setupScript" location="file-prep.groovy" run-at-startup="true">
+        <hdp:property name="localSourceFile" value="${app.home}/${localSourceFile}"/>
+        <hdp:property name="inputDir" value="${wc.input.path}"/>
+        <hdp:property name="outputDir" value="${wc.output.path}"/>
+        <hdp:property name="streamingDir" value="${tmp.streaming.path}"/>
+    </hdp:script>
+
+    <!-- required since Hadoop Job is a class not an interface and we need to use a Job with step scope to access #{jobParameters['...']} -->
+    <bean class="org.springframework.batch.core.scope.StepScope">
+        <property name="proxyTargetClass" value="true"/>
+    </bean>
+
+    <job id="job" xmlns="http://www.springframework.org/schema/batch">
+        <step id="streaming-step" next="wordcount-step">
+            <tasklet ref="streaming-tasklet" />
+        </step>
+        <step id="wordcount-step" next="result-step">
+            <tasklet ref="wordcount-tasklet" />
+        </step>
+        <step id="result-step">
+            <tasklet ref="results"/>
+        </step>
+    </job>
+
+    <hdp:job-tasklet id="streaming-tasklet" job-ref="streaming"  scope="step" />
+    <hdp:streaming id="streaming"
+                   input-path="${wc.input.path}"
+                   output-path="${tmp.streaming.path}"
+                   mapper="cat"
+                   reducer="cat">
+        <hdp:cmd-env>
+            HADOOP_CLASSPATH=$HADOOP_CLASSPATH:$HADOOP_HOME/hadoop-streaming.jar
+        </hdp:cmd-env>
+    </hdp:streaming>
+
+    <hdp:job-tasklet id="wordcount-tasklet" job-ref="wordcountJob" scope="step"/>
+    <hdp:job id="wordcountJob"
+        input-path="${tmp.streaming.path}"
+        output-path="${wc.output.path}"
+        jar="file:${app.repo}/${runnableJar.name}"
+        mapper="wordcount.WordCount$TokenizerMapper"
+        reducer="wordcount.WordCount$IntSumReducer"
+        scope="step" />
+
+    <hdp:script-tasklet id="results" scope="step">
+        <hdp:script location="classpath:results.groovy">
+            <hdp:property name="outputDir" value="${wc.output.path}"/>
+        </hdp:script>
+    </hdp:script-tasklet>
+	
+</beans>
