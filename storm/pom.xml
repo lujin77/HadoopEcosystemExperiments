@@ -6,8 +6,13 @@
     <artifactId>storm</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-
     <name>storm</name>
+
+    <parent>
+        <groupId>git.exps.bigdata</groupId>
+        <artifactId>HadoopEcosystemExperiments</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
