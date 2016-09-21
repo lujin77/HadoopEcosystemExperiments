@@ -9,6 +9,10 @@ import java.util.Properties;
 
 public class NativeConsumer {
 
+    public static final String BROKER = "10.0.11.91:9092";
+    public static final String TOPIC = "test";
+    public static final String GROUP = "j-group";
+
     public static void main(String[] str) throws InterruptedException {
 
         System.out.println("Starting AutoOffsetGuranteedAtLeastOnceConsumer ...");
@@ -22,9 +26,7 @@ public class NativeConsumer {
 
         KafkaConsumer<String, String> consumer = createConsumer();
 
-        // Subscribe to all partition in that topic. 'assign' could be used here
-        // instead of 'subscribe' to subscribe to specific partition.
-        consumer.subscribe(Arrays.asList("test"));
+        consumer.subscribe(Arrays.asList(TOPIC));
 
         processRecords(consumer);
 
@@ -33,20 +35,12 @@ public class NativeConsumer {
     private static KafkaConsumer<String, String> createConsumer() {
 
         Properties props = new Properties();
-        props.put("bootstrap.servers", "localhost:9092");
-        String consumeGroup = "cg1";
-        props.put("group.id", consumeGroup);
-
-        // Set this property, if auto commit should happen.
+        props.put("bootstrap.servers", BROKER);
+        props.put("group.id", GROUP);
+//        props.put("auto.offset.reset", "earliest");
         props.put("enable.auto.commit", "true");
-
-        // Make Auto commit interval to a big number so that auto commit does not happen,
-        // we are going to control the offset commit via consumer.commitSync(); after processing record.
         props.put("auto.commit.interval.ms", "999999999999");
-
-        // This is how to control number of records being read in each poll
-        props.put("max.partition.fetch.bytes", "10000");
-
+        props.put("max.partition.fetch.bytes", String.valueOf(1024 * 1024));
         props.put("heartbeat.interval.ms", "3000");
         props.put("session.timeout.ms", "6001");
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
@@ -59,7 +53,7 @@ public class NativeConsumer {
 
         while (true) {
 
-            ConsumerRecords<String, String> records = consumer.poll(100);
+            ConsumerRecords<String, String> records = consumer.poll(1000);
             long lastOffset = 0;
 
             for (ConsumerRecord<String, String> record : records) {
@@ -67,7 +61,7 @@ public class NativeConsumer {
                 lastOffset = record.offset();
             }
 
-            System.out.println("lastOffset read: " + lastOffset);
+//            System.out.println("lastOffset read: " + lastOffset);
 
             process();
 
