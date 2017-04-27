@@ -14,10 +14,11 @@
         <module>hadoop-traditional</module>
         <module>native-kafka</module>
         <module>storm</module>
+        <module>crunch</module>
     </modules>
 
     <properties>
-        <hadoop.version>2.7.2</hadoop.version>
+        <hadoop.version>2.7.1</hadoop.version>
         <hive.version>1.2.1</hive.version>
         <hbase.version>0.98.5-hadoop2</hbase.version>
         <pig.version>0.14.0</pig.version>
@@ -74,66 +75,102 @@
                 <scope>compile</scope>
             </dependency>
 
+            <dependency>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-client</artifactId>
+                <version>${hadoop.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.crunch</groupId>
+                <artifactId>crunch-core</artifactId>
+                <version>0.14.0</version>
+            </dependency>
+            <dependency>
+                <groupId>cascading</groupId>
+                <artifactId>cascading-core</artifactId>
+                <version>3.2.0-wip-7</version>
+            </dependency>
+            <dependency>
+                <groupId>cascading</groupId>
+                <artifactId>cascading-hadoop</artifactId>
+                <version>3.2.0-wip-7</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.mahout</groupId>
+                <artifactId>mahout-core</artifactId>
+                <version>0.9</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.mahout</groupId>
+                <artifactId>mahout-math</artifactId>
+                <version>0.12.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.mahout</groupId>
+                <artifactId>mahout-collections</artifactId>
+                <version>1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.mahout</groupId>
+                <artifactId>mahout-hdfs</artifactId>
+                <version>0.12.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.googlecode.lambdaj</groupId>
+                <artifactId>lambdaj</artifactId>
+                <version>2.3.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.collections</groupId>
+                <artifactId>eclipse-collections</artifactId>
+                <version>8.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>it.unimi.dsi</groupId>
+                <artifactId>fastutil</artifactId>
+                <version>7.0.12</version>
+            </dependency>
+            <dependency>
+                <groupId>trove</groupId>
+                <artifactId>trove</artifactId>
+                <version>1.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>net.sf.dozer</groupId>
+                <artifactId>dozer</artifactId>
+                <version>5.5.1</version>
+            </dependency>
+            <dependency>
+                <groupId>net.sf.dozer</groupId>
+                <artifactId>dozer-spring</artifactId>
+                <version>5.5.1</version>
+            </dependency>
+            <dependency>
+                <groupId>ma.glasnost.orika</groupId>
+                <artifactId>orika-core</artifactId>
+                <version>1.4.5</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>2.6.5</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jjackson-databind</artifactId>
+                <version>2.6.5</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>2.6.5</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.mahout</groupId>
-            <artifactId>mahout-core</artifactId>
-            <version>0.9</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.mahout</groupId>
-            <artifactId>mahout-math</artifactId>
-            <version>0.12.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.mahout</groupId>
-            <artifactId>mahout-collections</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.mahout</groupId>
-            <artifactId>mahout-hdfs</artifactId>
-            <version>0.12.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.lambdaj</groupId>
-            <artifactId>lambdaj</artifactId>
-            <version>2.3.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.collections</groupId>
-            <artifactId>eclipse-collections</artifactId>
-            <version>8.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>it.unimi.dsi</groupId>
-            <artifactId>fastutil</artifactId>
-            <version>7.0.12</version>
-        </dependency>
-        <dependency>
-            <groupId>trove</groupId>
-            <artifactId>trove</artifactId>
-            <version>1.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.dozer</groupId>
-            <artifactId>dozer</artifactId>
-            <version>5.5.1</version>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.dozer</groupId>
-            <artifactId>dozer-spring</artifactId>
-            <version>5.5.1</version>
-        </dependency>
-        <dependency>
-            <groupId>ma.glasnost.orika</groupId>
-            <artifactId>orika-core</artifactId>
-            <version>1.4.5</version>
-        </dependency>
-    </dependencies>
 
     <build>
         <plugins>
